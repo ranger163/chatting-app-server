@@ -1,5 +1,6 @@
 package me.inassar.demos.features.auth.data.local.source
 
+import com.mongodb.client.model.Filters
 import me.inassar.demos.features.auth.data.local.dao.UserEntity
 import org.litote.kmongo.coroutine.CoroutineDatabase
 
@@ -18,10 +19,8 @@ class AuthDataSourceImpl(database: CoroutineDatabase) : AuthDataSource {
         return userEntity
     }
 
-    override suspend fun getSingleUser(email: String): UserEntity? {
-        val user = getUsers().find { it.email.equals(email) }
-        return user?.id?.let { users.findOneById(it) }
-    }
+    override suspend fun findUserByEmail(email: String): UserEntity? =
+        users.find(Filters.eq("email", email)).first()
 
     override suspend fun getUsers(): List<UserEntity> =
         users.find().toList()

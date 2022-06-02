@@ -5,8 +5,8 @@ const val issuer = "demos.inassar.me"
 const val audience = "demos.inassar.me"
 const val mRealm = "Access to 'demos.inassar.me'"
 
-const val ENDPOINT_LOGIN = "/auth/signup"
-const val ENDPOINT_SIGNUP = "auth/login"
+const val ENDPOINT_SIGNUP = "/auth/signup"
+const val ENDPOINT_LOGIN = "auth/login"
 const val ENDPOINT_FRIEND_LIST = "/chat/friends-list"
 const val ENDPOINT_CHAT_HISTORY = "/chat/chat-history"
 
