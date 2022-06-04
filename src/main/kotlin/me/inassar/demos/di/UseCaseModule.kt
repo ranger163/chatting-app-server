@@ -2,6 +2,7 @@ package me.inassar.demos.di
 
 import me.inassar.demos.features.auth.resource.usecase.LoginUseCase
 import me.inassar.demos.features.auth.resource.usecase.SignUpUseCase
+import me.inassar.demos.features.chat.resource.usecase.FriendListUseCase
 import org.koin.dsl.module
 
 /**
@@ -11,4 +12,5 @@ import org.koin.dsl.module
 val useCaseModule = module {
     single { SignUpUseCase(get()) }
     single { LoginUseCase(get()) }
+    single { FriendListUseCase(get()) }
 }

@@ -24,11 +24,9 @@ class LoginUseCase(private val repository: AuthRepository) {
 
         val savedUser = repository.getUser(request.email)
 
-        return if (savedUser == null) {
-            AuthResponseState(data = null, error = ERROR_USER_NOT_EXISTS)
-        } else if (savedUser.email.equals(request.email) && savedUser.password.equals(request.password)) {
+        return if (savedUser?.email.equals(request.email) && savedUser?.password.equals(request.password)) {
             val token = generateToken(loginRequestDto = request)
-            AuthResponseState(data = savedUser.toUser().copy(token = token), error = null)
+            AuthResponseState(data = savedUser?.toUser()?.copy(token = token), error = null)
         } else {
             AuthResponseState(data = null, error = ERROR_INVALID_CREDENTIALS)
         }
