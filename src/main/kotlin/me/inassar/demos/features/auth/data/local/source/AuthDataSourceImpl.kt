@@ -21,7 +21,4 @@ class AuthDataSourceImpl(database: CoroutineDatabase) : AuthDataSource {
 
     override suspend fun findUserByEmail(email: String): UserEntity? =
         users.find(Filters.eq("email", email)).first()
-
-    override suspend fun getUsers(): List<UserEntity> =
-        users.find().toList()
 }
