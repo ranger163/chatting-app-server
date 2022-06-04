@@ -19,8 +19,6 @@ class AuthRepositoryImpl(private val datasource: AuthDataSource) : AuthRepositor
         return datasource.insertUser(request.toUserEntity().copy(token = token)).toUser()
     }
 
-    override suspend fun getUsers(): List<User> = datasource.getUsers().map { it.toUser() }
-
     override suspend fun getUser(email: String) =
         datasource.findUserByEmail(email)
 

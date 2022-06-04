@@ -6,6 +6,5 @@ import me.inassar.demos.features.auth.resource.data.User
 
 interface AuthRepository {
     suspend fun insertUser(request: SignupRequestDto, token: String): User
-    suspend fun getUsers(): List<User>
     suspend fun getUser(email: String): UserEntity?
 }
