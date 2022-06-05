@@ -2,7 +2,6 @@ package me.inassar.demos.plugins
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
@@ -11,6 +10,7 @@ import me.inassar.demos.common.audience
 import me.inassar.demos.common.issuer
 import me.inassar.demos.common.mRealm
 import me.inassar.demos.common.secret
+import me.inassar.demos.data.model.TokenExpiryResponseDTO
 import me.inassar.demos.features.auth.domain.model.login.request.LoginRequestDto
 import me.inassar.demos.features.auth.domain.model.signup.request.SignupRequestDto
 import java.util.*
@@ -35,7 +35,7 @@ fun Application.configureJwt() {
                 }
             }
             challenge { defaultScheme, realm ->
-                call.respond(HttpStatusCode.Unauthorized, "Token is not valid or has been expired.")
+                call.respond(TokenExpiryResponseDTO())
             }
         }
     }
