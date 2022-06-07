@@ -1,5 +1,7 @@
 package me.inassar.demos.di
 
+import me.inassar.demos.data.repository.JwtRepository
+import me.inassar.demos.data.repository.JwtRepositoryImpl
 import me.inassar.demos.features.auth.domain.repository.AuthRepository
 import me.inassar.demos.features.auth.domain.repository.AuthRepositoryImpl
 import me.inassar.demos.features.chat.domain.repository.ChatRepository
@@ -16,6 +18,10 @@ val repositoryModule = module {
     }
 
     single<ChatRepository> {
-        ChatRepositoryImpl(get())
+        ChatRepositoryImpl(get(), get())
+    }
+
+    single<JwtRepository> {
+        JwtRepositoryImpl()
     }
 }
