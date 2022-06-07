@@ -10,5 +10,6 @@ data class UserEntity(
     val token: String? = null,
     val username: String? = null,
     val email: String? = null,
+    val avatar: String? = null,
     val password: String? = null
 )

@@ -9,5 +9,6 @@ data class User(
 @kotlinx.serialization.Serializable
 data class UserData(
     val username: String? = null,
-    val email: String? = null
+    val email: String? = null,
+    val avatar: String? = null,
 )

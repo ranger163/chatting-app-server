@@ -18,6 +18,7 @@ fun UserEntity.toUser() = User(
     token = token,
     user = UserData(
         username = username,
-        email = email
+        email = email,
+        avatar = avatar
     )
 )

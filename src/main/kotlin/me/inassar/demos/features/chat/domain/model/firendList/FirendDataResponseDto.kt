@@ -9,5 +9,6 @@ data class FriendDataResponseDto(
 @kotlinx.serialization.Serializable
 data class FriendInfo(
     val username: String? = null,
-    val email: String? = null
+    val email: String? = null,
+    val avatar: String? = null
 )

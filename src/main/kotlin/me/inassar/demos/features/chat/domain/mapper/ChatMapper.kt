@@ -8,6 +8,7 @@ fun User.toFriendData() = FriendDataResponseDto(
     token = token,
     friendInfo = FriendInfo(
         username = user?.username,
-        email = user?.email
+        email = user?.email,
+        avatar = user?.avatar
     )
 )

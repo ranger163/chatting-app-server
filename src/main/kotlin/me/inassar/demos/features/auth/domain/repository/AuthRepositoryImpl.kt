@@ -1,10 +1,11 @@
 package me.inassar.demos.features.auth.domain.repository
 
-import me.inassar.demos.features.auth.domain.model.signup.request.SignupRequestDto
 import me.inassar.demos.features.auth.data.local.source.AuthDataSource
 import me.inassar.demos.features.auth.domain.mapper.toUser
 import me.inassar.demos.features.auth.domain.mapper.toUserEntity
+import me.inassar.demos.features.auth.domain.model.signup.request.SignupRequestDto
 import me.inassar.demos.features.auth.resource.data.User
+import java.util.*
 
 /**
  * Auth repository impl
@@ -16,7 +17,8 @@ import me.inassar.demos.features.auth.resource.data.User
 class AuthRepositoryImpl(private val datasource: AuthDataSource) : AuthRepository {
 
     override suspend fun insertUser(request: SignupRequestDto, token: String): User {
-        return datasource.insertUser(request.toUserEntity().copy(token = token)).toUser()
+        val avatar = UUID.randomUUID().toString()
+        return datasource.insertUser(request.toUserEntity().copy(token = token, avatar = avatar)).toUser()
     }
 
     override suspend fun getUser(email: String) =
