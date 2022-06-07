@@ -13,7 +13,9 @@ import org.koin.java.KoinJavaComponent.inject
 fun Route.friendsListEndpoint() {
     val useCase by inject<FriendListUseCase>(FriendListUseCase::class.java)
     get(ENDPOINT_FRIEND_LIST) {
-        call.respond(useCase())
+        useCase().collect { response ->
+            call.respond(response)
+        }
     }
 }
 

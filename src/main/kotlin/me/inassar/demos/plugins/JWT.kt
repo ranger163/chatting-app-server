@@ -11,11 +11,14 @@ import me.inassar.demos.common.issuer
 import me.inassar.demos.common.mRealm
 import me.inassar.demos.common.secret
 import me.inassar.demos.data.model.TokenExpiryResponseDTO
+import me.inassar.demos.data.repository.JwtRepository
 import me.inassar.demos.features.auth.domain.model.login.request.LoginRequestDto
 import me.inassar.demos.features.auth.domain.model.signup.request.SignupRequestDto
+import org.koin.java.KoinJavaComponent.inject
 import java.util.*
 
 fun Application.configureJwt() {
+    val repository by inject<JwtRepository>(JwtRepository::class.java)
 
     install(Authentication) {
         jwt("auth-jwt") {
@@ -28,7 +31,9 @@ fun Application.configureJwt() {
                     .build()
             )
             validate { credential ->
-                if (credential.payload.getClaim("email").asString() != "") {
+                val claims = credential.payload.getClaim("data")
+                if (claims.toString() != "") {
+                    repository.setPayload(claims)
                     JWTPrincipal(credential.payload)
                 } else {
                     null
