@@ -3,6 +3,7 @@ val kotlin_version: String by project
 val logback_version: String by project
 val kmongo_version: String by project
 val koin_version: String by project
+val gson_version: String by project
 
 plugins {
     application
@@ -25,14 +26,14 @@ repositories {
 }
 
 dependencies {
-    implementation("io.ktor:ktor-server-core-jvm:$ktor_version")
-    implementation("io.ktor:ktor-server-auth-jvm:$ktor_version")
-    implementation("io.ktor:ktor-server-auth-jwt-jvm:$ktor_version")
-    implementation("io.ktor:ktor-server-sessions-jvm:$ktor_version")
-    implementation("io.ktor:ktor-server-content-negotiation-jvm:$ktor_version")
-    implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktor_version")
-    implementation("io.ktor:ktor-server-websockets-jvm:$ktor_version")
-    implementation("io.ktor:ktor-server-netty-jvm:$ktor_version")
+    implementation("io.ktor:ktor-server-core:$ktor_version")
+    implementation("io.ktor:ktor-server-auth:$ktor_version")
+    implementation("io.ktor:ktor-server-auth-jwt:$ktor_version")
+    implementation("io.ktor:ktor-server-sessions:$ktor_version")
+    implementation("io.ktor:ktor-server-content-negotiation:$ktor_version")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
+    implementation("io.ktor:ktor-server-websockets:$ktor_version")
+    implementation("io.ktor:ktor-server-netty:$ktor_version")
     implementation("ch.qos.logback:logback-classic:$logback_version")
 
     // KMongo
@@ -45,8 +46,8 @@ dependencies {
     implementation("io.insert-koin:koin-logger-slf4j:$koin_version")
 
     // Gson
-    implementation ("com.google.code.gson:gson:2.8.9")
+    implementation("com.google.code.gson:gson:$gson_version")
 
-    testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
+    testImplementation("io.ktor:ktor-server-tests:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 }
