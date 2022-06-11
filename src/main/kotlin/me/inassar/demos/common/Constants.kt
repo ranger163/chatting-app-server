@@ -9,6 +9,7 @@ const val ENDPOINT_SIGNUP = "/auth/signup"
 const val ENDPOINT_LOGIN = "auth/login"
 const val ENDPOINT_FRIEND_LIST = "/chat/friends-list"
 const val ENDPOINT_CHAT_HISTORY = "/chat/chat-history"
+const val ENDPOINT_CHAT_CONNECT = "/chat/connect"
 
 val ERROR_USER_EXISTS: HashMap<String, String> = hashMapOf("message" to "User already exists.")
 val ERROR_USER_NOT_EXISTS: HashMap<String, String> = hashMapOf("message" to "User doesn't exists.")

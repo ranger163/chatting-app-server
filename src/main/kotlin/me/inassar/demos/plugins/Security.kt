@@ -1,48 +1,30 @@
 package me.inassar.demos.plugins
 
-import com.auth0.jwt.JWT
-import com.auth0.jwt.algorithms.Algorithm
 import io.ktor.server.application.*
-import io.ktor.server.auth.*
-import io.ktor.server.auth.jwt.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
-import me.inassar.demos.common.audience
-import me.inassar.demos.common.issuer
-import me.inassar.demos.common.mRealm
-import me.inassar.demos.common.secret
-import kotlin.collections.set
+import me.inassar.demos.features.chat.resource.data.ChatSession
+import java.util.*
 
 fun Application.configureSecurity() {
 
-    authentication {
-        jwt {
-            realm = mRealm
-            verifier(
-                JWT
-                    .require(Algorithm.HMAC256(secret))
-                    .withAudience(audience)
-                    .withIssuer(issuer)
-                    .build()
-            )
-            validate { credential ->
-                if (credential.payload.audience.contains(audience)) JWTPrincipal(credential.payload) else null
-            }
-        }
-    }
-    data class MySession(val count: Int = 0)
     install(Sessions) {
-        cookie<MySession>("MY_SESSION") {
-            cookie.extensions["SameSite"] = "lax"
-        }
+        cookie<ChatSession>("MY_SESSION")
     }
 
-    routing {
-        get("/session/increment") {
-            val session = call.sessions.get<MySession>() ?: MySession()
-            call.sessions.set(session.copy(count = session.count + 1))
-            call.respondText("Counter is ${session.count}. Refresh to increment.")
+    intercept(ApplicationCallPipeline.Plugins) {
+
+        if (call.sessions.get<ChatSession>() == null) {
+            val sender = call.parameters["sender"] ?: "Sender"
+            val receiver = call.parameters["receiver"] ?: "Receiver"
+            val sessionId = UUID.nameUUIDFromBytes((sender + receiver).toByteArray()).toString()
+
+            call.sessions.set(
+                ChatSession(
+                    sender = sender,
+                    receiver = receiver,
+                    sessionId = sessionId
+                )
+            )
         }
     }
 }

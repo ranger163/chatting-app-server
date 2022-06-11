@@ -1,13 +1,15 @@
 package me.inassar.demos.features.chat.resource
 
 import io.ktor.server.application.*
-import io.ktor.server.auth.*
-import io.ktor.server.auth.jwt.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.server.websocket.*
+import me.inassar.demos.common.ENDPOINT_CHAT_CONNECT
 import me.inassar.demos.common.ENDPOINT_CHAT_HISTORY
 import me.inassar.demos.common.ENDPOINT_FRIEND_LIST
+import me.inassar.demos.features.chat.resource.usecase.ConnectToSocketUseCase
 import me.inassar.demos.features.chat.resource.usecase.FriendListUseCase
+import me.inassar.demos.features.chat.resource.usecase.GetHistoryMessagesUseCase
 import org.koin.java.KoinJavaComponent.inject
 
 fun Route.friendsListEndpoint() {
@@ -19,11 +21,19 @@ fun Route.friendsListEndpoint() {
     }
 }
 
-fun Route.chatRoomEndpoint() {
+fun Route.chatHistoryEndpoint() {
+    val useCase by inject<GetHistoryMessagesUseCase>(GetHistoryMessagesUseCase::class.java)
     get(ENDPOINT_CHAT_HISTORY) {
-        val principal = call.principal<JWTPrincipal>()
-        val data = principal!!.payload.getClaim("data").asMap()
+        val receiver = call.parameters["receiver"].toString()
+        useCase(receiver = receiver).collect { response ->
+            call.respond(response)
+        }
+    }
+}
 
-        call.respond(data)
+fun Route.chatConnectEndpoint() {
+    val useCase by inject<ConnectToSocketUseCase>(ConnectToSocketUseCase::class.java)
+    webSocket(ENDPOINT_CHAT_CONNECT) {
+        useCase(this)
     }
 }
