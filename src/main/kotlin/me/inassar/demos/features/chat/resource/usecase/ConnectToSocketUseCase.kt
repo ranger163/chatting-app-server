@@ -4,15 +4,15 @@ import io.ktor.server.sessions.*
 import io.ktor.server.websocket.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.channels.consumeEach
+import me.inassar.demos.features.chat.data.dao.ChatSessionEntity
 import me.inassar.demos.features.chat.domain.repository.ChatRepository
-import me.inassar.demos.features.chat.resource.data.ChatSession
 import me.inassar.demos.features.chat.resource.data.Message
 
 class ConnectToSocketUseCase(private val repository: ChatRepository) {
 
     suspend operator fun invoke(webSocketServerSession: DefaultWebSocketServerSession) {
         webSocketServerSession.apply {
-            val session = call.sessions.get<ChatSession>()
+            val session = call.sessions.get<ChatSessionEntity>()
 
             if (session == null) {
                 close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "No session found."))

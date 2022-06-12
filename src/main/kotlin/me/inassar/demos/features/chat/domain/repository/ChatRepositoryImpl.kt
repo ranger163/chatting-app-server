@@ -8,10 +8,10 @@ import kotlinx.serialization.json.Json
 import me.inassar.demos.data.repository.JwtRepository
 import me.inassar.demos.features.auth.domain.mapper.toUser
 import me.inassar.demos.features.auth.resource.data.User
+import me.inassar.demos.features.chat.data.dao.ChatSessionEntity
 import me.inassar.demos.features.chat.data.source.ChatDataSource
 import me.inassar.demos.features.chat.domain.mapper.toMessage
 import me.inassar.demos.features.chat.domain.mapper.toMessageEntity
-import me.inassar.demos.features.chat.resource.data.ChatSession
 import me.inassar.demos.features.chat.resource.data.Member
 import me.inassar.demos.features.chat.resource.data.Message
 import java.util.concurrent.ConcurrentHashMap
@@ -23,13 +23,16 @@ class ChatRepositoryImpl(
     private val members = ConcurrentHashMap<String, Member>()
 
     override suspend fun getFriendList(): Flow<List<User>> = flow {
-        datasource.getFriendList().collect { friendList ->
+        datasource.getFriendList(jwtRepository.getEmailPayload()).collect { friendList ->
             val friendListResult = friendList.filter { friendEntity ->
                 friendEntity.email != jwtRepository.getEmailPayload()
             }.map { it.toUser() }
             emit(friendListResult)
         }
     }
+
+    override suspend fun checkSessionAvailability(sender: String, receiver: String): String =
+        datasource.checkSessionAvailability(sender, receiver)
 
     override suspend fun sendMessage(request: Message) {
         datasource.insertMessage(request.toMessageEntity())
@@ -42,19 +45,17 @@ class ChatRepositoryImpl(
         }
     }
 
-    override suspend fun getHistoryMessages(sessionId: String)
+    override suspend fun getHistoryMessages(sender: String, receiver: String)
             : Flow<List<Message>> = flow {
-        datasource.getHistoryMessages().collect { messageEntityList ->
-            val messageListResult = messageEntityList.filter {
-                it.sessionId == sessionId
-            }.map {
+        datasource.getHistoryMessages(sender, receiver).collect { messageEntityList ->
+            val messageListResult = messageEntityList.map {
                 it.toMessage()
             }
             emit(messageListResult)
         }
     }
 
-    override suspend fun connectToSocket(session: ChatSession?, socket: WebSocketSession) {
+    override suspend fun connectToSocket(session: ChatSessionEntity?, socket: WebSocketSession) {
         if (members.contains(session?.sender))
             println("User exists")
 

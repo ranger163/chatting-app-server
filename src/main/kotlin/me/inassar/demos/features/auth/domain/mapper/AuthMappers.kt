@@ -19,6 +19,7 @@ fun UserEntity.toUser() = User(
     user = UserData(
         username = username,
         email = email,
-        avatar = avatar
+        avatar = avatar,
+        lastMessage = lastMessage
     )
 )

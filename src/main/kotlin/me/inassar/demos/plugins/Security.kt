@@ -2,24 +2,28 @@ package me.inassar.demos.plugins
 
 import io.ktor.server.application.*
 import io.ktor.server.sessions.*
-import me.inassar.demos.features.chat.resource.data.ChatSession
-import java.util.*
+import me.inassar.demos.features.chat.data.dao.ChatSessionEntity
+import me.inassar.demos.features.chat.domain.repository.ChatRepository
+import org.koin.java.KoinJavaComponent.inject
 
 fun Application.configureSecurity() {
 
     install(Sessions) {
-        cookie<ChatSession>("MY_SESSION")
+        cookie<ChatSessionEntity>("MY_SESSION")
     }
 
     intercept(ApplicationCallPipeline.Plugins) {
 
-        if (call.sessions.get<ChatSession>() == null) {
+        val chatRepository by inject<ChatRepository>(ChatRepository::class.java)
+
+        if (call.sessions.get<ChatSessionEntity>() == null) {
             val sender = call.parameters["sender"] ?: "Sender"
             val receiver = call.parameters["receiver"] ?: "Receiver"
-            val sessionId = UUID.nameUUIDFromBytes((sender + receiver).toByteArray()).toString()
+
+            val sessionId = chatRepository.checkSessionAvailability(sender, receiver)
 
             call.sessions.set(
-                ChatSession(
+                ChatSessionEntity(
                     sender = sender,
                     receiver = receiver,
                     sessionId = sessionId
