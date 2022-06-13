@@ -31,13 +31,16 @@ class ChatRepositoryImpl(
         }
     }
 
-    override suspend fun checkSessionAvailability(sender: String, receiver: String): String =
+    override suspend fun checkSessionAvailability(sender: String, receiver: String): String? =
         datasource.checkSessionAvailability(sender, receiver)
+
+    override suspend fun createNewSession(sender: String, receiver: String): String =
+        datasource.createNewSession(sender, receiver)
 
     override suspend fun sendMessage(request: Message) {
         datasource.insertMessage(request.toMessageEntity())
 
-        members.values.filter { it.sender != request.sender }.forEach { member ->
+        members.values.filter { it.sessionId == request.sessionId }.forEach { member ->
             // Encoding message into json string.
             val broadcastMessage = Json.encodeToString(request)
             // Sending message to other socket subscribers.

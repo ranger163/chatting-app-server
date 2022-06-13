@@ -17,18 +17,21 @@ fun Application.configureSecurity() {
         val chatRepository by inject<ChatRepository>(ChatRepository::class.java)
 
         if (call.sessions.get<ChatSessionEntity>() == null) {
-            val sender = call.parameters["sender"] ?: "Sender"
-            val receiver = call.parameters["receiver"] ?: "Receiver"
+            val sender = call.parameters["sender"].orEmpty()
+            val receiver = call.parameters["receiver"].orEmpty()
 
-            val sessionId = chatRepository.checkSessionAvailability(sender, receiver)
+            if (sender.isNotEmpty() && receiver.isNotEmpty()) {
+                var sessionId = chatRepository.checkSessionAvailability(sender, receiver)
 
-            call.sessions.set(
-                ChatSessionEntity(
-                    sender = sender,
-                    receiver = receiver,
-                    sessionId = sessionId
+                if (sessionId.isNullOrEmpty())
+                    sessionId = chatRepository.createNewSession(sender, receiver)
+
+                call.sessions.set(
+                    ChatSessionEntity(
+                        sender = sender, receiver = receiver, sessionId = sessionId
+                    )
                 )
-            )
+            }
         }
     }
 }

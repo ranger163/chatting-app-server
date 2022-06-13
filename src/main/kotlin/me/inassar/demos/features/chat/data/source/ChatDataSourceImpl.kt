@@ -1,6 +1,5 @@
 package me.inassar.demos.features.chat.data.source
 
-import com.mongodb.client.model.Filters
 import io.ktor.util.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -33,13 +32,12 @@ class ChatDataSourceImpl(database: CoroutineDatabase) : ChatDataSource {
 
     /**
      * Get session by id
-     * This function checks if both sender and receiver already has session id or not,
-     * if not it will create a new session id for them and return it back to socket.
+     * This function checks if both sender and receiver already has session id or not.
      * @param sender
      * @param receiver
      * @return
      */
-    override suspend fun checkSessionAvailability(sender: String, receiver: String): String {
+    override suspend fun checkSessionAvailability(sender: String, receiver: String): String? {
         val result = session.find().toList()
         return try {
             result.first {
@@ -48,10 +46,21 @@ class ChatDataSourceImpl(database: CoroutineDatabase) : ChatDataSource {
                 ))
             }.sessionId
         } catch (e: NoSuchElementException) {
-            val sessionId = UUID.nameUUIDFromBytes(generateNonce().toByteArray()).toString()
-            session.insertOne(ChatSessionEntity(sender = sender, receiver = receiver, sessionId = sessionId))
-            sessionId
+            null
         }
+    }
+
+    /**
+     * Create new session
+     * This function will create a new session id for sender and receiver and return it back to socket.
+     * @param sender
+     * @param receiver
+     * @return
+     */
+    override suspend fun createNewSession(sender: String, receiver: String): String {
+        val sessionId = UUID.nameUUIDFromBytes(generateNonce().toByteArray()).toString()
+        session.insertOne(ChatSessionEntity(sender = sender, receiver = receiver, sessionId = sessionId))
+        return sessionId
     }
 
     override suspend fun insertMessage(messageEntity: MessageEntity) {
@@ -68,9 +77,12 @@ class ChatDataSourceImpl(database: CoroutineDatabase) : ChatDataSource {
      */
     override suspend fun getHistoryMessages(sender: String, receiver: String): Flow<List<MessageEntity>> = flow {
         try {
-            val sessionId = checkSessionAvailability(sender, receiver)
             val result =
-                messages.find(Filters.eq("sessionId", sessionId)).descendingSort(MessageEntity::timestamp).toList()
+                messages.find().descendingSort(MessageEntity::timestamp).toList().filter {
+                    (it.sender.contains(sender) && it.receiver.contains(receiver)) || (it.sender.contains(receiver) && it.receiver.contains(
+                        sender
+                    ))
+                }
             emit(result)
         } catch (e: Exception) {
             emit(emptyList())
