@@ -1,0 +1,1 @@
+web: ./build/install/social-app-server/bin/social-app-server

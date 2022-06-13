@@ -5,6 +5,10 @@ val kmongo_version: String by project
 val koin_version: String by project
 val gson_version: String by project
 
+tasks {
+    create("stage").dependsOn("installDist")
+}
+
 plugins {
     application
     kotlin("jvm") version "1.6.21"
