@@ -1,4 +1,4 @@
-# SocialApp
+# Social App Server
 
 ## A little boring but important introduction
 
