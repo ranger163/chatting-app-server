@@ -1,8 +1,8 @@
-# Social App Server
+# Chatting App Server
 
 ## A little boring but important introduction
 
-This project is to play more with kotlin ktor framework for server side, and it has an android client version that you can test called [SocialApp](https://github.com/ranger163/SocialApp).
+This project is to play more with kotlin ktor framework for server side, and it has an android client version that you can test called [SocialApp](https://github.com/ranger163/ChattingApp).
 It's main goal to create REST APIs and serving data to/from client, it's like a simple whatsApp application, but instead of depending on user phone number here I've used normal signup form
 and I'm depending on user email address for login and also for generating websocket session ID for each chat room.
 
